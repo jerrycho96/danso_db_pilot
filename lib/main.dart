@@ -19,6 +19,18 @@ List<SongModel> songList = [
     songJangdan: 'song_jangdan 02',
     songLike: 'false',
   ),
+  SongModel(
+    songTitle: 'song_title 03',
+    songPath: 'song_path 03',
+    songJangdan: 'song_jangdan 03',
+    songLike: 'false',
+  ),
+  SongModel(
+    songTitle: 'song_title 04',
+    songPath: 'song_path 04',
+    songJangdan: 'song_jangdan 04',
+    songLike: 'false',
+  ),
 ];
 
 void main() => runApp(MyApp());
@@ -46,6 +58,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -63,11 +80,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   return Dismissible(
                     key: UniqueKey(),
                     onDismissed: (direction) {
-                      // DBHelper().deleteSongModel(item.songId);
                       DBHelPer().deleteSong(item.songId);
                       setState(() {});
                     },
-                    child: Center(child: Text(item.songTitle)),
+                    child: Center(
+                      child: Text(
+                          '${item.songId} ${item.songTitle} ${item.songJangdan} ${item.songLike}'),
+                    ),
                   );
                 },
               );
@@ -92,9 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
             FloatingActionButton(
               child: Icon(Icons.add),
               onPressed: () {
-                SongModel songModel =
-                    songList[Random().nextInt(songList.length)];
-                DBHelPer().insertSongData(songModel);
+                songList.forEach((element) {
+                  DBHelPer().insertSongData(element);
+                });
                 setState(() {});
               },
             ),

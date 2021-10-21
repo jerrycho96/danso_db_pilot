@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:danso_db_pilot/models/chal_model.dart';
 import 'package:danso_db_pilot/models/song_model.dart';
 import 'package:path/path.dart';
 // import 'package:sqflite/sqflite.dart' as sql;
@@ -10,6 +11,34 @@ import 'package:path_provider/path_provider.dart';
 import '../models/song_model.dart';
 
 final String songTable = 'TB_SONG';
+
+// 더미 데이터
+List<SongModel> songList = [
+  SongModel(
+    songTitle: 'song_title 01',
+    songPath: 'song_path 01',
+    songJangdan: 'song_jangdan 01',
+    songLike: 'false',
+  ),
+  SongModel(
+    songTitle: 'song_title 02',
+    songPath: 'song_path 02',
+    songJangdan: 'song_jangdan 02',
+    songLike: 'false',
+  ),
+  SongModel(
+    songTitle: 'song_title 03',
+    songPath: 'song_path 03',
+    songJangdan: 'song_jangdan 03',
+    songLike: 'false',
+  ),
+  SongModel(
+    songTitle: 'song_title 04',
+    songPath: 'song_path 04',
+    songJangdan: 'song_jangdan 04',
+    songLike: 'false',
+  ),
+];
 
 class DBHelPer {
   DBHelPer._();
@@ -29,7 +58,7 @@ class DBHelPer {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, 'DansoDB.db');
 
-    return await openDatabase(path, version: 1, onCreate: (db, version) async {
+    return await openDatabase(path, version: 2, onCreate: (db, version) async {
       await db.execute('''
             CREATE TABLE TB_USER
             (
@@ -39,21 +68,21 @@ class DBHelPer {
       await db.execute('''
             CREATE TABLE $songTable
             (
-                song_id       INT, 
-                song_title    VARCHAR(45)   NOT NULL, 
-                song_path     VARCHAR(999)  NOT NULL, 
-                song_jangdan  VARCHAR(45)   NOT NULL, 
-                song_like     VARCHAR(45)   NOT NULL, 
+                song_id       INTEGER,
+                song_title    TEXT    NOT NULL, 
+                song_path     TEXT    NOT NULL, 
+                song_jangdan  TEXT    NOT NULL, 
+                song_like     TEXT    NOT NULL, 
                 PRIMARY KEY (song_id)
             )
           ''');
       await db.execute('''
             CREATE TABLE TB_CHAL
             (
-                chal_id     INT, 
-                song_id     INT, 
-                chal_score  INT          NOT NULL, 
-                chal_time   TIMESTAMP    NOT NULL, 
+                chal_id     INTEGER, 
+                song_id     INTEGER     NOT NULL, 
+                chal_score  INTEGER     NOT NULL, 
+                chal_time   TIMESTAMP   NOT NULL, 
                 PRIMARY KEY (chal_id)
             );
 
@@ -63,11 +92,11 @@ class DBHelPer {
       await db.execute('''
             CREATE TABLE TB_EXER
             (
-                exer_id    INT, 
-                song_id    INT, 
-                exer_type  VARCHAR(45)     NOT NULL, 
-                exer_path  VARCHAR(999)    NOT NULL, 
-                exer_time  TIMESTAMP       NOT NULL, 
+                exer_id    INTEGER, 
+                song_id    INTEGER      NOT NULL, 
+                exer_type  TEXT         NOT NULL, 
+                exer_path  TEXT         NOT NULL, 
+                exer_time  TIMESTAMP    NOT NULL, 
                 PRIMARY KEY (exer_id)
             );
 
@@ -77,7 +106,25 @@ class DBHelPer {
     }, onUpgrade: (db, oldVersion, newVersion) {});
   }
 
-  // song query
+  // frequency query -> TB_USER
+  //===========================================================================
+  insertFr() async {
+    final db = await database;
+    await db.rawInsert('INSERT INTO TB_USER (standard_fr) VALUES(?)');
+  }
+
+  // updateFr() async {
+  //   final db = await database;
+  //   await db.rawUpdate('UPDATE ');
+  // }
+
+  deleteFr() async {
+    final db = await database;
+    await db.rawDelete('DELETE FROM TB_USER');
+  }
+  //===========================================================================
+
+  // song query -> TB_SONG
   //===========================================================================
   // insert song data
   insertSongData(SongModel song) async {
@@ -126,7 +173,7 @@ class DBHelPer {
   }
 
   //Update
-  updateDog(SongModel song) async {
+  updateSong(SongModel song) async {
     final db = await database;
     var res = db.rawUpdate(
         '''UPDATE $songTable SET song_title = ?, song_path = ?, song_jangdan = ?, song_like = ? WHERE song_id = ?''',
@@ -140,4 +187,17 @@ class DBHelPer {
     return res;
   }
   //===========================================================================
+
+  // CHALLANGE query -> TB_CHAL
+  //===========================================================================
+  // insert song data
+  insertChalData(ChallangeModel chal) async {
+    final db = await database;
+    await db.rawInsert(
+        'INSERT INTO TB_CHAL (song_id, chal_score, chal_time) VALUES(?,?,?)',
+        [chal.songId, chal.chalScore, chal.chalTime]);
+  }
+
+  //===========================================================================
+
 }
