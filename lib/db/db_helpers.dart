@@ -7,6 +7,8 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../models/song_model.dart';
+
 final String songTable = 'TB_SONG';
 
 class DBHelPer {
@@ -98,12 +100,14 @@ class DBHelPer {
     final db = await database;
     var res = await db.rawQuery('SELECT * FROM $songTable');
     List<SongModel> list = res.isNotEmpty
-        ? res.map((value) => SongModel(
-            songId: value['song_id'],
-            songTitle: value['song_title'],
-            songPath: value['song_path'],
-            songJangdan: value['song_jangdan'],
-            songLike: value['song_like']))
+        ? res
+            .map((value) => SongModel(
+                songId: value['song_id'],
+                songTitle: value['song_title'],
+                songPath: value['song_path'],
+                songJangdan: value['song_jangdan'],
+                songLike: value['song_like']))
+            .toList()
         : [];
     return list;
   }
@@ -121,5 +125,19 @@ class DBHelPer {
     return res;
   }
 
+  //Update
+  updateDog(SongModel song) async {
+    final db = await database;
+    var res = db.rawUpdate(
+        '''UPDATE $songTable SET song_title = ?, song_path = ?, song_jangdan = ?, song_like = ? WHERE song_id = ?''',
+        [
+          song.songTitle,
+          song.songPath,
+          song.songJangdan,
+          song.songLike,
+          song.songId
+        ]);
+    return res;
+  }
   //===========================================================================
 }
