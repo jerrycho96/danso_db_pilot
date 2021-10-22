@@ -1,14 +1,10 @@
 import 'dart:io';
 
-import 'package:danso_db_pilot/models/chal_model.dart';
-import 'package:danso_db_pilot/models/song_model.dart';
 import 'package:path/path.dart';
-// import 'package:sqflite/sqflite.dart' as sql;
-// import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../models/song_model.dart';
+import '../models/models.dart';
 
 final String songTable = 'TB_SONG';
 
@@ -82,7 +78,7 @@ class DBHelPer {
                 chal_id     INTEGER, 
                 song_id     INTEGER     NOT NULL, 
                 chal_score  INTEGER     NOT NULL, 
-                chal_time   TIMESTAMP   NOT NULL, 
+                chal_time   TEXT, 
                 PRIMARY KEY (chal_id)
             );
 
@@ -96,7 +92,7 @@ class DBHelPer {
                 song_id    INTEGER      NOT NULL, 
                 exer_type  TEXT         NOT NULL, 
                 exer_path  TEXT         NOT NULL, 
-                exer_time  TIMESTAMP    NOT NULL, 
+                exer_time  TEXT, 
                 PRIMARY KEY (exer_id)
             );
 
@@ -108,9 +104,11 @@ class DBHelPer {
 
   // frequency query -> TB_USER
   //===========================================================================
-  insertFr() async {
+
+  insertFr(UserModel user) async {
     final db = await database;
-    await db.rawInsert('INSERT INTO TB_USER (standard_fr) VALUES(?)');
+    await db.rawInsert(
+        'INSERT INTO TB_USER (standard_fr) VALUES(?)', [user.standardFr]);
   }
 
   // updateFr() async {
@@ -126,6 +124,7 @@ class DBHelPer {
 
   // song query -> TB_SONG
   //===========================================================================
+
   // insert song data
   insertSongData(SongModel song) async {
     final db = await database;
@@ -190,12 +189,92 @@ class DBHelPer {
 
   // CHALLANGE query -> TB_CHAL
   //===========================================================================
-  // insert song data
+  // insert challange data
   insertChalData(ChallangeModel chal) async {
     final db = await database;
+    await db.rawInsert('INSERT INTO TB_CHAL (song_id, chal_score) VALUES(?,?)',
+        [chal.songId, chal.chalScore]);
+  }
+
+  // read challange data
+  readChalData(int id) async {
+    final db = await database;
+    var res =
+        await db.rawQuery('SELECT * FROM TB_CHAL WHERE song_id = ?', [id]);
+    return res;
+  }
+
+  // read all challange data
+  Future<List<ChallangeModel>> getAllChal() async {
+    final db = await database;
+    var res = await db.rawQuery('SELECT * FROM TB_CHAL');
+    List<ChallangeModel> list = res.isNotEmpty
+        ? res
+            .map((value) => SongModel(
+                songId: value['song_id'],
+                songTitle: value['song_title'],
+                songPath: value['song_path'],
+                songJangdan: value['song_jangdan'],
+                songLike: value['song_like']))
+            .toList()
+        : [];
+    return list;
+  }
+
+  //===========================================================================
+
+  // EXERCISE query -> TB_EXER
+  //===========================================================================
+  // insert exercise data
+  insertExerData(ExerciseModel exer) async {
+    final db = await database;
     await db.rawInsert(
-        'INSERT INTO TB_CHAL (song_id, chal_score, chal_time) VALUES(?,?,?)',
-        [chal.songId, chal.chalScore, chal.chalTime]);
+        'INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES(?,?,?)',
+        [exer.songId, exer.exerType, exer.exerPath]);
+  }
+
+  //===========================================================================
+
+  // 마이페이지 - 기록 탭
+  //===========================================================================
+  //
+  Future<List<MyHistoryModel>> readMyHistoryData() async {
+    final db = await database;
+    var res = await db.rawQuery(
+        'SELECT s.song_title, c.song_id FROM TB_CHAL AS c INNER JOIN TB_SONG AS s ON c.song_id = s.song_id GROUP BY s.song_id');
+    List<MyHistoryModel> list = res.isNotEmpty
+        ? res
+            .map(
+              (value) => MyHistoryModel(
+                songTitle: value['song_title'],
+                songId: value['song_id'],
+              ),
+            )
+            .toList()
+        : [];
+    print(list);
+    return list;
+  }
+
+  // 마이페이지 - 기록 탭 - 그래프
+  //===========================================================================
+  //
+  Future<List<MyHistoryModel>> readMyHistoryGraph(int songId) async {
+    final db = await database;
+    var res = await db.rawQuery(
+        'SELECT chal_score, chal_time FROM TB_CHAL WHERE song_id=?', [songId]);
+    List<MyHistoryModel> list = res.isNotEmpty
+        ? res
+            .map(
+              (value) => MyHistoryModel(
+                chalScore: value['chal_score'],
+                chalTime: value['chal_time'],
+              ),
+            )
+            .toList()
+        : [];
+    print(list);
+    return list;
   }
 
   //===========================================================================

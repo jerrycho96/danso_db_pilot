@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class ChallangeModel {
   final int chalId;
@@ -8,8 +8,8 @@ class ChallangeModel {
 
   ChallangeModel({
     this.songId,
-    this.chalId,
+    @required this.chalId,
     @required this.chalScore,
-    @required this.chalTime,
+    this.chalTime,
   });
 }
