@@ -1,5 +1,4 @@
 import 'package:danso_db_pilot/controller/chal_data_controller.dart';
-import 'package:danso_db_pilot/db/db_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -31,19 +30,24 @@ class _GraphPageState extends State<GraphPage> {
       body: Obx(
         () => Container(
           color: Colors.grey,
-          child: ListView.builder(
-            itemCount: listData.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text('${listData[index].chalScore} 점'),
-                    Text('${listData[index].chalTime}'),
-                  ],
-                ),
-              );
-            },
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ListView.builder(
+              reverse: true,
+              shrinkWrap: true,
+              itemCount: listData.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text('${listData[index].chalScore} 점'),
+                      Text('${listData[index].chalTime}'),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

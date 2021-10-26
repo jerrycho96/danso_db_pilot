@@ -8,34 +8,6 @@ import '../models/models.dart';
 
 final String songTable = 'TB_SONG';
 
-// 더미 데이터
-List<SongModel> songList = [
-  SongModel(
-    songTitle: 'song_title 01',
-    songPath: 'song_path 01',
-    songJangdan: 'song_jangdan 01',
-    songLike: 'false',
-  ),
-  SongModel(
-    songTitle: 'song_title 02',
-    songPath: 'song_path 02',
-    songJangdan: 'song_jangdan 02',
-    songLike: 'false',
-  ),
-  SongModel(
-    songTitle: 'song_title 03',
-    songPath: 'song_path 03',
-    songJangdan: 'song_jangdan 03',
-    songLike: 'false',
-  ),
-  SongModel(
-    songTitle: 'song_title 04',
-    songPath: 'song_path 04',
-    songJangdan: 'song_jangdan 04',
-    songLike: 'false',
-  ),
-];
-
 class DBHelPer {
   DBHelPer._();
   static final DBHelPer _db = DBHelPer._();
@@ -124,9 +96,8 @@ class DBHelPer {
 
   // song query -> TB_SONG
   //===========================================================================
-
   // insert song data
-  insertSongData(SongModel song) async {
+  insertSongData(SongDataModel song) async {
     final db = await database;
     await db.rawInsert(
         'INSERT INTO $songTable (song_title, song_path, song_jangdan, song_like) VALUES(?,?,?,?)',
@@ -175,7 +146,7 @@ class DBHelPer {
   updateSong(SongModel song) async {
     final db = await database;
     var res = db.rawUpdate(
-        '''UPDATE $songTable SET song_title = ?, song_path = ?, song_jangdan = ?, song_like = ? WHERE song_id = ?''',
+        'UPDATE $songTable SET song_title = ?, song_path = ?, song_jangdan = ?, song_like = ? WHERE song_id = ?',
         [
           song.songTitle,
           song.songPath,
@@ -220,7 +191,6 @@ class DBHelPer {
         : [];
     return list;
   }
-
   //===========================================================================
 
   // EXERCISE query -> TB_EXER
@@ -229,10 +199,45 @@ class DBHelPer {
   insertExerData(ExerciseModel exer) async {
     final db = await database;
     await db.rawInsert(
-        'INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES(?,?,?)',
-        [exer.songId, exer.exerType, exer.exerPath]);
+        'INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES(?,?,?,?)',
+        [exer.songId, exer.exerType, exer.exerPath, exer.exerTime]);
   }
 
+  Future<List<ExerciseModel>> readExerSoundData() async {
+    final db = await database;
+    var res = await db.rawQuery(
+        "SELECT * FROM TB_EXER AS e INNER JOIN TB_SONG AS s ON e.song_id = s.song_id WHERE exer_type='sound'");
+    List<ExerciseModel> list = res.isNotEmpty
+        ? res
+            .map(
+              (value) => ExerciseModel(
+                songTitle: value['song_title'],
+                exerPath: value['exer_path'],
+                exerTime: value['exer_time'],
+              ),
+            )
+            .toList()
+        : [];
+    return list;
+  }
+
+  Future<List<ExerciseModel>> readExerVideoData() async {
+    final db = await database;
+    var res = await db.rawQuery(
+        "SELECT * FROM TB_EXER AS e INNER JOIN TB_SONG AS s ON e.song_id = s.song_id WHERE exer_type='video'");
+    List<ExerciseModel> list = res.isNotEmpty
+        ? res
+            .map(
+              (value) => ExerciseModel(
+                songTitle: value['song_title'],
+                exerPath: value['exer_path'],
+                exerTime: value['exer_time'],
+              ),
+            )
+            .toList()
+        : [];
+    return list;
+  }
   //===========================================================================
 
   // 마이페이지 - 기록 탭
@@ -276,7 +281,32 @@ class DBHelPer {
     print(list);
     return list;
   }
-
   //===========================================================================
 
+  // 마이페이지 - 관심곡 리스트
+  //===========================================================================
+  // 관심곡 리스트 불러오기
+  Future<List<SongDataModel>> readLikeSongList() async {
+    final db = await database;
+    var res = await db.rawQuery('SELECT * FROM TB_SONG WHERE song_like="true"');
+    List<SongDataModel> list = res.isNotEmpty
+        ? res
+            .map(
+              (value) => SongDataModel(
+                songId: value['song_id'],
+                songTitle: value['song_title'],
+                songLike: value['song_like'],
+              ),
+            )
+            .toList()
+        : [];
+    return list;
+  }
+
+  // 관심곡 업데이트
+  updateLikeSongList(String songLike, int songId) async {
+    final db = await database;
+    await db.rawUpdate(
+        'UPDATE TB_SONG SET song_like=? WHERE song_id=?', [songLike, songId]);
+  }
 }

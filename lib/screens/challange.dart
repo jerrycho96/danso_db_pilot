@@ -1,7 +1,6 @@
 import 'package:danso_db_pilot/controller/controllers.dart';
-import 'package:danso_db_pilot/db/db_helpers.dart';
 import 'package:danso_db_pilot/models/models.dart';
-import 'package:danso_db_pilot/screens/graph.dart';
+import 'package:danso_db_pilot/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -101,24 +101,34 @@ class Dummy {
   insertExerDummy() async {
     final db = await database;
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (01, 'exer_type 01', 'exer_path 01');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (01, 'sound', 'exer_path 01', ?);",
+        [DateTime.now().toString()]);
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (02, 'exer_type 02', 'exer_path 02');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (02, 'sound', 'exer_path 02', ?);",
+        [DateTime.now().toString()]);
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (03, 'exer_type 03', 'exer_path 03');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (03, 'sound', 'exer_path 03', ?);",
+        [DateTime.now().toString()]);
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (04, 'exer_type 04', 'exer_path 04');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (04, 'video', 'exer_path 04', ?);",
+        [DateTime.now().toString()]);
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (05, 'exer_type 05', 'exer_path 05');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (05, 'sound', 'exer_path 05', ?);",
+        [DateTime.now().toString()]);
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (06, 'exer_type 06', 'exer_path 06');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (06, 'sound', 'exer_path 06', ?);",
+        [DateTime.now().toString()]);
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (07, 'exer_type 07', 'exer_path 07');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (07, 'sound', 'exer_path 07', ?);",
+        [DateTime.now().toString()]);
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (08, 'exer_type 08', 'exer_path 08');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (08, 'video', 'exer_path 08', ?);",
+        [DateTime.now().toString()]);
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (09, 'exer_type 09', 'exer_path 09');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (09, 'video', 'exer_path 09', ?);",
+        [DateTime.now().toString()]);
     await db.rawInsert(
-        "INSERT INTO TB_EXER (song_id, exer_type, exer_path) VALUES (10, 'exer_type 10', 'exer_path 10');");
+        "INSERT INTO TB_EXER (song_id, exer_type, exer_path, exer_time) VALUES (10, 'video', 'exer_path 10', ?);",
+        [DateTime.now().toString()]);
   }
 }
