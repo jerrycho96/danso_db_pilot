@@ -33,7 +33,7 @@ dependencies:
   path_provider: ^1.6.10
   permission_handler: ^5.0.1+1
   get: ^3.26.0
-  intl: any
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:
