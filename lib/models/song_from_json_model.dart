@@ -7,8 +7,6 @@ import 'dart:convert';
 SongFromJson songFromJsonFromJson(String str) =>
     SongFromJson.fromJson(json.decode(str));
 
-String songFromJsonToJson(SongFromJson data) => json.encode(data.toJson());
-
 class SongFromJson {
   SongFromJson({
     this.songData,

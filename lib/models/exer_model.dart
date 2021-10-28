@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class ExerciseModel {
   final int exerId;
   final int songId;

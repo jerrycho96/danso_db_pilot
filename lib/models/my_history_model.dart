@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class MyHistoryModel {
   final String songTitle;
   final int songId;
